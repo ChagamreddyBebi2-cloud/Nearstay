@@ -1,184 +1,505 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* Main Page */
+.nearstay {
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
+/* Top Black Bar */
+.top-bar {
+  height: 42px;
+  background: #171717;
+  color: white;
   display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6%;
+  font-size: 13px;
 }
 
-#next-steps {
+.top-bar span {
+  margin-right: 25px;
+}
+
+/* Navigation */
+.navbar {
+  height: 78px;
+  background: #f8f6f2;
   display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
+/* Logo */
+.logo {
   display: flex;
+  align-items: center;
   gap: 8px;
-  margin: 32px 0 0;
+  color: #222;
+  line-height: 16px;
+}
 
-  .logo {
-    height: 18px;
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: #8b5e3c;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+}
+.logo strong {
+  font-size: 18px;
+}
+
+.logo span {
+  font-size: 18px;
+  color: #e85b35;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-links a:hover {
+  color: #e85b35;
+}
+
+/* Book Button */
+.book-button {
+  background: #e85b35;
+  color: white;
+  border: none;
+  padding: 14px 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.book-button:hover {
+  background: #c94725;
+}
+
+/* Hero Section */
+.hero {
+  min-height: 550px;
+
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.35),
+      rgba(0, 0, 0, 0.35)
+    ),
+    url("/nearstay_hero_room.jpg");
+
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Hero Content */
+.hero-content {
+  width: 90%;
+  max-width: 1100px;
+  color: white;
+}
+
+.welcome {
+  font-size: 17px;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+
+.hero h1 {
+  font-family: Georgia, serif;
+  font-size: 52px;
+  font-weight: normal;
+  margin: 0 auto 15px;
+  line-height: 1.2;
+}
+
+.hero h1 span {
+  color: #e85b35;
+}
+
+.hero-text {
+  font-size: 18px;
+  margin-bottom: 45px;
+}
+
+/* Booking Box */
+/* Booking Box */
+.booking-box {
+  background: #f8f6f2;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1000px;
+  margin: 35px auto 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.22);
+}
+
+/* Location / Check-in / Check-out */
+.booking-field {
+  flex: 1;
+  background: white;
+  text-align: left;
+  padding: 14px 18px;
+  border-radius: 5px;
+  border: 1px solid #e4e0da;
+}
+
+.booking-field label {
+  display: block;
+  color: #000000;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 8px;
+}
+
+.booking-field input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6f4e37;
+  background: transparent;
+}
+
+.booking-field input::placeholder {
+  color: #8b735f;
+  font-size: 14px;
+}
+
+/* Search Button */
+.search-button {
+  background: #e85b35;
+  color: white;
+  border: none;
+  padding: 18px 30px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.search-button:hover {
+  background: #c94725;
+}
+/* Booking Fields */
+.booking-field {
+  flex: 1;
+  background: white;
+  text-align: left;
+  padding: 14px 18px;
+  border-radius: 5px;
+  border: 1px solid #e4e0da;
+}
+
+.booking-field label {
+  display: block;
+  color: #9a9188;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 8px;
+}
+
+.booking-field input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  background: transparent;
+}
+
+.booking-field input::placeholder {
+  color: #777;
+  font-size: 14px;
+}
+
+/* Search Button */
+.search-button {
+  background: #e85b35;
+  color: white;
+  border: none;
+  padding: 18px 30px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background: #c94725;
+}
+
+/* Mobile Responsive */
+@media (max-width: 800px) {
+
+  .top-bar {
+    display: none;
   }
 
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
+  .navbar {
+    height: auto;
+    padding: 15px 5%;
+    flex-wrap: wrap;
+    gap: 15px;
   }
 
-  @media (max-width: 1024px) {
-    margin-top: 20px;
+  .nav-links {
+    gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+  }
 
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
+  .book-button {
+    padding: 10px 15px;
+  }
 
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
+  .hero {
+    min-height: 600px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .booking-box {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .booking-field {
+    width: 90%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+  }
+
+  .search-button {
+    width: 95%;
+    margin-top: 10px;
   }
 }
+/* ================================
+   WHY CHOOSE NEARSTAY
+================================ */
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.why-nearstay {
+  background: #f8f6f2;
+  text-align: center;
+  padding: 80px 6%;
 }
 
-.ticks {
-  position: relative;
-  width: 100%;
+.section-small-title {
+  color: #e85b35;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+.why-nearstay h2 {
+  font-family: Georgia, serif;
+  font-size: 38px;
+  font-weight: normal;
+  color: #222;
+  margin: 0 0 15px;
+}
+
+.why-nearstay h2 span {
+  color: #e85b35;
+}
+
+.section-description {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 45px;
+}
+
+.features {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.feature-card {
+  background: white;
+  padding: 35px 22px;
+  min-height: 190px;
+  border-radius: 4px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.feature-icon {
+  font-size: 32px;
+  margin-bottom: 18px;
+}
+
+.feature-card h3 {
+  color: #222;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+
+/* Mobile */
+@media (max-width: 800px) {
+
+  .why-nearstay {
+    padding: 60px 5%;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+  .why-nearstay h2 {
+    font-size: 30px;
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
+
+}/* ================================
+   WHY CHOOSE NEARSTAY
+================================ */
+
+.why-nearstay {
+  background: #f8f6f2;
+  text-align: center;
+  padding: 80px 6%;
+}
+
+.section-small-title {
+  color: #e85b35;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.why-nearstay h2 {
+  font-family: Georgia, serif;
+  font-size: 38px;
+  font-weight: normal;
+  color: #222;
+  margin: 0 0 15px;
+}
+
+.why-nearstay h2 span {
+  color: #e85b35;
+}
+
+.section-description {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 45px;
+}
+
+.features {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.feature-card {
+  background: white;
+  padding: 35px 22px;
+  min-height: 190px;
+  border-radius: 4px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.feature-icon {
+  font-size: 32px;
+  margin-bottom: 18px;
+}
+
+.feature-card h3 {
+  color: #222;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+
+/* Mobile */
+@media (max-width: 800px) {
+
+  .why-nearstay {
+    padding: 60px 5%;
+  }
+
+  .why-nearstay h2 {
+    font-size: 30px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+}
+.booking-field label {
+  color: #000 !important;
+}
+.search-icon {
+  text-decoration: none;
+  font-size: 18px;
+  color: #6f4e37;
+}
+
+.search-icon:hover {
+  color: #e85b35;
 }

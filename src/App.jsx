@@ -1,122 +1,174 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div className="nearstay">
+
+      {/* Top Bar */}
+      <div className="top-bar">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+          <span>✉ info@nearstay.com</span>
+          <span>☎ +91 98765 43210</span>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+
+        <div>
+          <span>🔒 Login</span>
+          <span>👤 Register</span>
+        </div>
+      </div>
+
+      {/* Navigation Bar */}
+      <nav className="navbar">
+
+        <div className="logo">
+        <div className="logo-icon">🏨</div>
+
+          <div>
+            <strong>NEAR</strong>
+            <br />
+            <span>STAY</span>
+          </div>
+        </div>
+
+        <div className="nav-links">
+          <a href="#">Home</a>
+          <a href="#">About Us</a>
+          <a href="#">Rooms</a>
+          <a href="#">Places</a>
+          <a href="#">Contact Us</a>
+          <a href="#" className="search-icon">
+  🔎
+</a>
+        </div>
+
+        <button className="book-button">
+          BOOK NOW
         </button>
+
+      </nav>
+
+      {/* Hero Section */}
+      <section className="hero">
+
+        <div className="hero-content">
+
+          <p className="welcome">
+            WELCOME TO NEARSTAY
+          </p>
+
+          <h1>
+            Find Your Perfect Stay at a
+            <span> Dream Location</span>
+          </h1>
+
+          <p className="hero-text">
+            Discover comfortable rooms, PGs and hotels near you.
+          </p>
+
+          {/* Search / Booking Box */}
+          <div className="booking-box">
+
+            <div className="booking-field">
+              <label>LOCATION</label>
+
+              <input
+                type="text"
+                placeholder="Select Location"
+              />
+            </div>
+
+            <div className="booking-field">
+              <label>CHECK-IN</label>
+
+              <input
+                type="text"
+                placeholder="________________"
+              />
+            </div>
+
+            <div className="booking-field">
+              <label>CHECK-OUT</label>
+
+              <input
+                type="text"
+                placeholder="________________"
+              />
+            </div>
+
+            <button className="search-button">
+              SEARCH →
+            </button>
+
+          </div>
+
+        </div>
+
       </section>
 
-      <div className="ticks"></div>
+      {/* Why Choose NearStay */}
+      <section className="why-nearstay">
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <p className="section-small-title">
+          WHY CHOOSE NEARSTAY
+        </p>
+
+        <h2>
+          Everything You Need for a{" "}
+          <span>Comfortable Stay</span>
+        </h2>
+
+        <p className="section-description">
+          Find suitable stays and useful places around you, all in one place.
+        </p>
+
+        <div className="features">
+
+          <div className="feature-card">
+            <div className="feature-icon">📍</div>
+
+            <h3>Nearby Locations</h3>
+
+            <p>
+              Discover rooms and stays close to your selected location.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">🛏️</div>
+
+            <h3>Comfortable Rooms</h3>
+
+            <p>
+              Explore rooms, PGs and hotels with useful details.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">⭐</div>
+
+            <h3>Real Reviews</h3>
+
+            <p>
+              Check ratings and reviews before choosing your stay.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">🛡️</div>
+
+            <h3>Safe Stay</h3>
+
+            <p>
+              Make informed choices for a comfortable stay.
+            </p>
+          </div>
+
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
+
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
