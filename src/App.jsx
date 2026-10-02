@@ -1,10 +1,13 @@
 import "./App.css";
+import NearbyLocations from "./NearbyLocations";
 
 function App() {
+  if (window.location.pathname === "/nearby-locations") {
+    return <NearbyLocations />;
+  }
   return (
     <div className="nearstay">
 
-      {/* Top Bar */}
       <div className="top-bar">
         <div>
           <span>✉ info@nearstay.com</span>
@@ -17,11 +20,10 @@ function App() {
         </div>
       </div>
 
-      {/* Navigation Bar */}
       <nav className="navbar">
 
         <div className="logo">
-        <div className="logo-icon">🏨</div>
+          <div className="logo-icon">🏨</div>
 
           <div>
             <strong>NEAR</strong>
@@ -32,29 +34,21 @@ function App() {
 
         <div className="nav-links">
           <a href="#">Home</a>
-          <a href="#">About Us</a>
-          <a href="#">Rooms</a>
-          <a href="#">Places</a>
+          <a href="#about">About Us</a>
+          <a href="#rooms">Rooms</a>
+          <a href="#places">Places</a>
           <a href="#">Contact Us</a>
-          <a href="#" className="search-icon">
-  🔎
-</a>
+          <a href="#" className="search-icon">🔎</a>
         </div>
 
-        <button className="book-button">
-          BOOK NOW
-        </button>
+        <button className="book-button">BOOK NOW</button>
 
       </nav>
 
-      {/* Hero Section */}
       <section className="hero">
-
         <div className="hero-content">
 
-          <p className="welcome">
-            WELCOME TO NEARSTAY
-          </p>
+          <p className="welcome">WELCOME TO NEARSTAY</p>
 
           <h1>
             Find Your Perfect Stay at a
@@ -65,12 +59,10 @@ function App() {
             Discover comfortable rooms, PGs and hotels near you.
           </p>
 
-          {/* Search / Booking Box */}
           <div className="booking-box">
 
             <div className="booking-field">
               <label>LOCATION</label>
-
               <input
                 type="text"
                 placeholder="Select Location"
@@ -79,7 +71,6 @@ function App() {
 
             <div className="booking-field">
               <label>CHECK-IN</label>
-
               <input
                 type="text"
                 placeholder="________________"
@@ -88,7 +79,6 @@ function App() {
 
             <div className="booking-field">
               <label>CHECK-OUT</label>
-
               <input
                 type="text"
                 placeholder="________________"
@@ -100,15 +90,30 @@ function App() {
             </button>
 
           </div>
-
         </div>
-
       </section>
+      <section id="about">
+  <h2>About NearStay</h2>
+  <p>
+    NearStay helps you find comfortable rooms, PGs and hotels near your location.
+  </p>
+</section>
 
-      {/* Why Choose NearStay */}
       <section className="why-nearstay">
 
         <p className="section-small-title">
+        <section id="rooms">
+  <h2>Our Rooms</h2>
+  <p>
+    Explore comfortable rooms, PGs and hotels that suit your needs.
+  </p>
+</section>
+<section id="places">
+  <h2>Nearby Places</h2>
+  <p>
+    Find restaurants, tourist places, hospitals and transport near your stay.
+  </p>
+</section>
           WHY CHOOSE NEARSTAY
         </p>
 
@@ -123,21 +128,19 @@ function App() {
 
         <div className="features">
 
-          <div className="feature-card">
-            <div className="feature-icon">📍</div>
-
-            <h3>Nearby Locations</h3>
-
-            <p>
-              Discover rooms and stays close to your selected location.
-            </p>
-          </div>
-
+        <div
+  className="feature-card"
+  onClick={() => window.location.href = "/nearby-locations"}
+>
+  <div className="feature-icon">📍</div>
+  <h3>Nearby Locations</h3>
+  <p>
+    Discover rooms and stays close to your selected location.
+  </p>
+</div>
           <div className="feature-card">
             <div className="feature-icon">🛏️</div>
-
             <h3>Comfortable Rooms</h3>
-
             <p>
               Explore rooms, PGs and hotels with useful details.
             </p>
@@ -145,9 +148,7 @@ function App() {
 
           <div className="feature-card">
             <div className="feature-icon">⭐</div>
-
             <h3>Real Reviews</h3>
-
             <p>
               Check ratings and reviews before choosing your stay.
             </p>
@@ -155,16 +156,13 @@ function App() {
 
           <div className="feature-card">
             <div className="feature-icon">🛡️</div>
-
             <h3>Safe Stay</h3>
-
             <p>
               Make informed choices for a comfortable stay.
             </p>
           </div>
 
         </div>
-
       </section>
 
     </div>
