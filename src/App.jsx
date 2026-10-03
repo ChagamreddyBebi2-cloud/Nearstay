@@ -1,10 +1,16 @@
 import "./App.css";
 import NearbyLocations from "./NearbyLocations";
+import HotelDetails from "./HotelDetails";
 
 function App() {
   if (window.location.pathname === "/nearby-locations") {
     return <NearbyLocations />;
   }
+
+  if (window.location.pathname === "/hotel-details") {
+    return <HotelDetails />;
+  }
+
   return (
     <div className="nearstay">
 
@@ -90,32 +96,36 @@ function App() {
             </button>
 
           </div>
+
         </div>
       </section>
+
       <section id="about">
-  <h2>About NearStay</h2>
-  <p>
-    NearStay helps you find comfortable rooms, PGs and hotels near your location.
-  </p>
-</section>
+        <h2>About NearStay</h2>
+        <p>
+          NearStay helps you find comfortable rooms, PGs and hotels near your location.
+        </p>
+      </section>
 
       <section className="why-nearstay">
 
         <p className="section-small-title">
-        <section id="rooms">
-  <h2>Our Rooms</h2>
-  <p>
-    Explore comfortable rooms, PGs and hotels that suit your needs.
-  </p>
-</section>
-<section id="places">
-  <h2>Nearby Places</h2>
-  <p>
-    Find restaurants, tourist places, hospitals and transport near your stay.
-  </p>
-</section>
           WHY CHOOSE NEARSTAY
         </p>
+
+        <section id="rooms">
+          <h2>Our Rooms</h2>
+          <p>
+            Explore comfortable rooms, PGs and hotels that suit your needs.
+          </p>
+        </section>
+
+        <section id="places">
+          <h2>Nearby Places</h2>
+          <p>
+            Find restaurants, tourist places, hospitals and transport near your stay.
+          </p>
+        </section>
 
         <h2>
           Everything You Need for a{" "}
@@ -128,16 +138,19 @@ function App() {
 
         <div className="features">
 
-        <div
-  className="feature-card"
-  onClick={() => window.location.href = "/nearby-locations"}
->
-  <div className="feature-icon">📍</div>
-  <h3>Nearby Locations</h3>
-  <p>
-    Discover rooms and stays close to your selected location.
-  </p>
-</div>
+          <div
+            className="feature-card"
+            onClick={() => {
+              window.location.href = "/nearby-locations";
+            }}
+          >
+            <div className="feature-icon">📍</div>
+            <h3>Nearby Locations</h3>
+            <p>
+              Discover rooms and stays close to your selected location.
+            </p>
+          </div>
+
           <div className="feature-card">
             <div className="feature-icon">🛏️</div>
             <h3>Comfortable Rooms</h3>
@@ -163,6 +176,7 @@ function App() {
           </div>
 
         </div>
+
       </section>
 
     </div>
