@@ -1,61 +1,93 @@
-import { useState, useEffect } from "react";
-import { Mic } from "lucide-react";
-
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
-  useMap
+  useMap,
 } from "react-leaflet";
-
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
+import { Mic } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 import "./NearbyLocations.css";
 
-// ----------------------------------
-// Fix Leaflet marker icons
-// ----------------------------------
-
+// --------------------
+// Leaflet default icon
+// --------------------
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
   iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png"
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// ----------------------------------
-// Voice Helper
-// ----------------------------------
+// --------------------
+// Category icons
+// --------------------
+const createIcon = (emoji, background = "#ffffff") =>
+  L.divIcon({
+    className: "category-marker",
+    html: `
+      <div style="
+        width:38px;
+        height:38px;
+        border-radius:50%;
+        background:${background};
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:21px;
+        border:2px solid white;
+        box-shadow:0 2px 8px rgba(0,0,0,0.25);
+      ">
+        ${emoji}
+      </div>
+    `,
+    iconSize: [38, 38],
+    iconAnchor: [19, 19],
+    popupAnchor: [0, -20],
+  });
 
+// Selected location
+const selectedLocationIcon = createIcon("📍", "#f3d7bd");
+
+// Category icons
+const categoryIcons = {
+  stay: createIcon("🏨", "#fff3e6"),
+  restaurant: createIcon("🍴", "#fff0d9"),
+  hospital: createIcon("🏥", "#ffe5e5"),
+  police: createIcon("🚓", "#e7f0ff"),
+  bus: createIcon("🚌", "#e8f7ed"),
+  supermarket: createIcon("🛒", "#fff8d9"),
+  tourist: createIcon("📸", "#f1e8ff"),
+};
+
+// --------------------
+// Voice announcement
+// --------------------
 function speakLocation(locationName) {
-  if (!("speechSynthesis" in window)) {
-    return;
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+
+    const message = new SpeechSynthesisUtterance(
+      `You are in ${locationName}`
+    );
+
+    message.lang = "en-IN";
+    message.rate = 0.9;
+    message.pitch = 1;
+
+    window.speechSynthesis.speak(message);
   }
-
-  const speech = new SpeechSynthesisUtterance(
-    `You are in ${locationName}`
-  );
-
-  speech.lang = "en-IN";
-  speech.rate = 0.9;
-  speech.pitch = 1;
-
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(speech);
 }
 
-// ----------------------------------
-// Get Short Location Name
-// ----------------------------------
-
+// --------------------
+// Get short location name
+// --------------------
 function getShortLocationName(place) {
   const address = place.address || {};
 
@@ -71,100 +103,21 @@ function getShortLocationName(place) {
   );
 }
 
-// ----------------------------------
-// Use My Location Button
-// ----------------------------------
-
-function LocationButton({
-  setUserLocation,
-  setSelectedLocationName
-}) {
-  const map = useMap();
-
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      alert(
-        "Geolocation is not supported by your browser."
-      );
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userLocation = [
-          position.coords.latitude,
-          position.coords.longitude
-        ];
-
-        setUserLocation(userLocation);
-
-        setSelectedLocationName("Your Location");
-
-        map.setView(
-          userLocation,
-          15,
-          {
-            animate: true
-          }
-        );
-
-        if ("speechSynthesis" in window) {
-          const speech =
-            new SpeechSynthesisUtterance(
-              "You are here"
-            );
-
-          speech.lang = "en-IN";
-          speech.rate = 0.9;
-
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(
-            speech
-          );
-        }
-      },
-
-      () => {
-        alert(
-          "Unable to get your location."
-        );
-      }
-    );
-  };
-
-  return (
-    <button
-      className="location-button"
-      onClick={getLocation}
-    >
-      📍 Use My Location
-    </button>
-  );
-}
-
-// ----------------------------------
+// --------------------
 // Location Search
-// ----------------------------------
-
+// --------------------
 function LocationSearch({
   setUserLocation,
-  setSelectedLocationName
+  setSelectedLocationName,
 }) {
   const [search, setSearch] = useState("");
-  const [suggestions, setSuggestions] =
-    useState([]);
-
-  const [isListening, setIsListening] =
-    useState(false);
-
-  // ----------------------------------
-  // Search Places
-  // ----------------------------------
+  const [suggestions, setSuggestions] = useState([]);
+  const [isListening, setIsListening] = useState(false);
 
   const searchPlaces = async (value) => {
     setSearch(value);
 
-    if (value.trim().length < 3) {
+    if (!value.trim()) {
       setSuggestions([]);
       return;
     }
@@ -176,136 +129,79 @@ function LocationSearch({
         )}&limit=5`
       );
 
-      if (!response.ok) {
-        throw new Error(
-          "Location search failed"
-        );
-      }
-
-      const data =
-        await response.json();
-
+      const data = await response.json();
       setSuggestions(data);
     } catch (error) {
-      console.log(
-        "Location search error:",
-        error
-      );
-
-      setSuggestions([]);
+      console.error("Location search error:", error);
     }
   };
 
-  // ----------------------------------
-  // Select Location
-  // ----------------------------------
-
   const selectLocation = (place) => {
-    const latitude =
-      parseFloat(place.lat);
+    const lat = Number(place.lat);
+    const lon = Number(place.lon);
 
-    const longitude =
-      parseFloat(place.lon);
+    const locationName = getShortLocationName(place);
 
-    if (
-      Number.isNaN(latitude) ||
-      Number.isNaN(longitude)
-    ) {
-      return;
-    }
+    setUserLocation([lat, lon]);
+    setSelectedLocationName(locationName);
 
-    const location = [
-      latitude,
-      longitude
-    ];
-
-    const locationName =
-      getShortLocationName(place);
-
-    setUserLocation(location);
-
-    setSelectedLocationName(
-      locationName
-    );
-
-    // Show only useful location name
     setSearch(locationName);
-
     setSuggestions([]);
 
-    // Voice announcement
     speakLocation(locationName);
   };
 
-  // ----------------------------------
+  // --------------------
   // Voice Search
-  // ----------------------------------
-
+  // --------------------
   const startVoiceSearch = () => {
     const SpeechRecognition =
       window.SpeechRecognition ||
       window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert(
-        "Voice search is not supported in this browser."
-      );
+      alert("Voice search is not supported in this browser.");
       return;
     }
 
-    const recognition =
-      new SpeechRecognition();
+    const recognition = new SpeechRecognition();
 
     recognition.lang = "en-IN";
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
+    setIsListening(true);
 
-    recognition.onresult = async (
-      event
-    ) => {
-      const voiceText =
+    recognition.onresult = async (event) => {
+      const spokenText =
         event.results[0][0].transcript;
 
-      setSearch(voiceText);
+      setSearch(spokenText);
 
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
-            voiceText
+            spokenText
           )}&limit=1`
         );
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
         if (data.length > 0) {
           selectLocation(data[0]);
         } else {
-          setSuggestions([]);
-          alert(
-            "Location not found. Please try again."
-          );
+          alert("Location not found.");
         }
       } catch (error) {
-        console.log(
-          "Voice location search error:",
-          error
-        );
+        console.error(error);
       }
-    };
-
-    recognition.onerror = (event) => {
-      console.log(
-        "Voice search error:",
-        event.error
-      );
 
       setIsListening(false);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+      alert("Unable to understand the location.");
     };
 
     recognition.onend = () => {
@@ -315,53 +211,36 @@ function LocationSearch({
     recognition.start();
   };
 
-  // ----------------------------------
-  // Search Box UI
-  // ----------------------------------
-
   return (
-    <div className="location-search">
+    <div className="location-search-container">
+      <div className="location-search">
+        <div className="search-input-wrapper">
+          <input
+            type="text"
+            value={search}
+            placeholder="Search a location..."
+            onChange={(e) =>
+              searchPlaces(e.target.value)
+            }
+          />
 
-      <div className="search-input-wrapper">
+          <button
+            type="button"
+            className={`voice-button ${
+              isListening ? "listening" : ""
+            }`}
+            onClick={startVoiceSearch}
+            title="Voice Search"
+          >
+            <Mic size={22} strokeWidth={2} />
+          </button>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Search location..."
-          value={search}
-          onChange={(e) =>
-            searchPlaces(
-              e.target.value
-            )
-          }
-        />
-
-        <button
-          type="button"
-          className={`voice-button ${
-            isListening
-              ? "listening"
-              : ""
-          }`}
-          onClick={
-            startVoiceSearch
-          }
-          title="Voice Search"
-        >
-          <Mic size={22} strokeWidth={2} />
-        </button>
-
-      </div>
-
-      {suggestions.length > 0 && (
-        <div className="location-suggestions">
-
-          {suggestions.map(
-            (place) => {
-
+        {suggestions.length > 0 && (
+          <div className="location-suggestions">
+            {suggestions.map((place, index) => {
               const name =
-                getShortLocationName(
-                  place
-                );
+                getShortLocationName(place);
 
               const state =
                 place.address?.state;
@@ -371,20 +250,13 @@ function LocationSearch({
 
               return (
                 <div
-                  key={
-                    place.place_id
-                  }
+                  key={index}
                   className="location-suggestion"
                   onClick={() =>
-                    selectLocation(
-                      place
-                    )
+                    selectLocation(place)
                   }
                 >
-
-                  <span>
-                    📍 {name}
-                  </span>
+                  <span>📍 {name}</span>
 
                   <small>
                     {state
@@ -394,63 +266,105 @@ function LocationSearch({
                       ? `, ${country}`
                       : ""}
                   </small>
-
                 </div>
               );
-            }
-          )}
-
-        </div>
-      )}
-
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-// ----------------------------------
-// Move Map when Location Changes
-// ----------------------------------
+// --------------------
+// My Location
+// --------------------
+function LocationButton({
+  setUserLocation,
+  setSelectedLocationName,
+}) {
+  const handleLocation = () => {
+    if (!navigator.geolocation) {
+      alert(
+        "Geolocation is not supported by your browser."
+      );
+      return;
+    }
 
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = [
+          position.coords.latitude,
+          position.coords.longitude,
+        ];
+
+        setUserLocation(location);
+        setSelectedLocationName(
+          "Your Location"
+        );
+
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+
+          const message =
+            new SpeechSynthesisUtterance(
+              "You are here"
+            );
+
+          message.lang = "en-IN";
+          message.rate = 0.9;
+
+          window.speechSynthesis.speak(message);
+        }
+      },
+      () => {
+        alert("Unable to get your location.");
+      }
+    );
+  };
+
+  return (
+    <button
+      className="location-button"
+      onClick={handleLocation}
+    >
+      Use My Location
+    </button>
+  );
+}
+
+// --------------------
+// Move map
+// --------------------
 function MapLocationUpdater({
-  userLocation
+  userLocation,
 }) {
   const map = useMap();
 
   useEffect(() => {
-    if (!userLocation) {
-      return;
+    if (userLocation) {
+      map.setView(userLocation, 14, {
+        animate: true,
+      });
     }
-
-    map.setView(
-      userLocation,
-      15,
-      {
-        animate: true
-      }
-    );
-  }, [
-    userLocation,
-    map
-  ]);
+  }, [userLocation, map]);
 
   return null;
 }
 
-// ----------------------------------
-// Nearby Locations Page
-// ----------------------------------
-
+// --------------------
+// Main Component
+// --------------------
 function NearbyLocations() {
   const [userLocation, setUserLocation] =
     useState(null);
 
   const [
     selectedLocationName,
-    setSelectedLocationName
+    setSelectedLocationName,
   ] = useState("");
 
-  const [places, setPlaces] =
-    useState([]);
+  const [places, setPlaces] = useState([]);
 
   const [loadingPlaces, setLoadingPlaces] =
     useState(false);
@@ -458,329 +372,191 @@ function NearbyLocations() {
   const [placesError, setPlacesError] =
     useState("");
 
-  // ----------------------------------
-  // Fetch Real Nearby Places
-  // ----------------------------------
+  // --------------------
+  // Fetch nearby places
+  // --------------------
+  useEffect(() => {
+    if (!userLocation) return;
 
-  const fetchNearbyPlaces = async (
-    latitude,
-    longitude
-  ) => {
-    setLoadingPlaces(true);
-    setPlacesError("");
+    const fetchNearbyPlaces = async () => {
+      setLoadingPlaces(true);
+      setPlacesError("");
 
-    const query = `
-      [out:json][timeout:25];
+      const [lat, lon] = userLocation;
 
-      (
-        nwr(around:3000,${latitude},${longitude})["tourism"="hotel"];
-        nwr(around:3000,${latitude},${longitude})["tourism"="hostel"];
-        nwr(around:3000,${latitude},${longitude})["tourism"="guest_house"];
-        nwr(around:3000,${latitude},${longitude})["tourism"="motel"];
-        nwr(around:3000,${latitude},${longitude})["amenity"="hospital"];
-        nwr(around:3000,${latitude},${longitude})["amenity"="police"];
-        nwr(around:3000,${latitude},${longitude})["amenity"="restaurant"];
-        nwr(around:3000,${latitude},${longitude})["amenity"="bus_station"];
-        nwr(around:3000,${latitude},${longitude})["shop"="supermarket"];
-        nwr(around:3000,${latitude},${longitude})["tourism"="attraction"];
-      );
+      const query = `
+        [out:json];
+        (
+          node["tourism"="hotel"](around:3000,${lat},${lon});
+          node["tourism"="hostel"](around:3000,${lat},${lon});
+          node["tourism"="guest_house"](around:3000,${lat},${lon});
+          node["tourism"="motel"](around:3000,${lat},${lon});
 
-      out center tags;
-    `;
+          node["amenity"="restaurant"](around:3000,${lat},${lon});
+          node["amenity"="hospital"](around:3000,${lat},${lon});
+          node["amenity"="police"](around:3000,${lat},${lon});
+          node["amenity"="bus_station"](around:3000,${lat},${lon});
 
-    try {
-      const response = await fetch(
-        "https://overpass-api.de/api/interpreter",
-        {
-          method: "POST",
-          body: query
-        }
-      );
+          node["shop"="supermarket"](around:3000,${lat},${lon});
 
-      if (!response.ok) {
-        throw new Error(
-          "Unable to fetch nearby places"
+          node["tourism"="attraction"](around:3000,${lat},${lon});
         );
-      }
 
-      const data =
-        await response.json();
+        out;
+      `;
 
-      const mappedPlaces =
-        data.elements
-          .map((place) => {
+      try {
+        const response = await fetch(
+          "https://overpass-api.de/api/interpreter",
+          {
+            method: "POST",
+            body: query,
+          }
+        );
 
-            const latitude =
-              place.lat ??
-              place.center?.lat;
+        const data = await response.json();
 
-            const longitude =
-              place.lon ??
-              place.center?.lon;
+        const formattedPlaces = data.elements
+          .map((item) => {
+            const placeLat = item.lat;
+            const placeLon = item.lon;
 
-            const tags =
-              place.tags || {};
-
-            if (
-              latitude === undefined ||
-              longitude === undefined
-            ) {
+            if (!placeLat || !placeLon)
               return null;
-            }
 
             let type = "Place";
-            let icon = "📍";
+            let icon = categoryIcons.tourist;
 
             if (
-              tags.tourism ===
-                "hotel" ||
-              tags.tourism ===
-                "motel"
+              item.tags?.tourism === "hotel" ||
+              item.tags?.tourism === "hostel" ||
+              item.tags?.tourism ===
+                "guest_house" ||
+              item.tags?.tourism === "motel"
             ) {
-              type = "Hotel";
-              icon = "🏨";
-            }
-
-            else if (
-              tags.tourism ===
-              "hostel"
-            ) {
-              type = "Hostel";
-              icon = "🛏️";
-            }
-
-            else if (
-              tags.tourism ===
-              "guest_house"
-            ) {
-              type =
-                "Guest House";
-              icon = "🏠";
-            }
-
-            else if (
-              tags.amenity ===
-              "hospital"
-            ) {
-              type = "Hospital";
-              icon = "🏥";
-            }
-
-            else if (
-              tags.amenity ===
-              "police"
-            ) {
-              type =
-                "Police Station";
-              icon = "👮";
-            }
-
-            else if (
-              tags.amenity ===
+              type = "Hotel / Stay";
+              icon = categoryIcons.stay;
+            } else if (
+              item.tags?.amenity ===
               "restaurant"
             ) {
-              type =
-                "Restaurant";
-              icon = "🍽️";
-            }
-
-            else if (
-              tags.amenity ===
+              type = "Restaurant";
+              icon =
+                categoryIcons.restaurant;
+            } else if (
+              item.tags?.amenity === "hospital"
+            ) {
+              type = "Hospital";
+              icon =
+                categoryIcons.hospital;
+            } else if (
+              item.tags?.amenity === "police"
+            ) {
+              type = "Police";
+              icon = categoryIcons.police;
+            } else if (
+              item.tags?.amenity ===
               "bus_station"
             ) {
-              type =
-                "Bus Station";
-              icon = "🚌";
-            }
-
-            else if (
-              tags.shop ===
-              "supermarket"
+              type = "Bus Station";
+              icon = categoryIcons.bus;
+            } else if (
+              item.tags?.shop === "supermarket"
             ) {
-              type =
-                "Supermarket";
-              icon = "🛒";
-            }
-
-            else if (
-              tags.tourism ===
+              type = "Supermarket";
+              icon =
+                categoryIcons.supermarket;
+            } else if (
+              item.tags?.tourism ===
               "attraction"
             ) {
               type =
-                "Tourist Place";
-              icon = "📸";
+                "Tourist Attraction";
+              icon =
+                categoryIcons.tourist;
             }
 
-            const address = [
-              tags[
-                "addr:housenumber"
-              ],
-              tags[
-                "addr:street"
-              ],
-              tags[
-                "addr:city"
-              ]
-            ]
-              .filter(Boolean)
-              .join(", ");
-
             return {
-              id: `${place.type}-${place.id}`,
-
+              id: item.id,
+              lat: placeLat,
+              lon: placeLon,
               name:
-                tags.name ||
+                item.tags?.name ||
                 "Unnamed Place",
-
               type,
-
               icon,
-
-              location: [
-                latitude,
-                longitude
-              ],
-
-              address:
-                address ||
-                "Address not available"
             };
           })
           .filter(Boolean);
 
-      setPlaces(
-        mappedPlaces
-      );
-    }
+        // Limit places so map stays clean
+        setPlaces(
+          formattedPlaces.slice(0, 40)
+        );
+      } catch (error) {
+        console.error(error);
 
-    catch (error) {
-      console.log(
-        "Nearby places error:",
-        error
-      );
+        setPlacesError(
+          "Unable to load nearby places."
+        );
+      } finally {
+        setLoadingPlaces(false);
+      }
+    };
 
-      setPlacesError(
-        "Unable to load nearby places."
-      );
-
-      setPlaces([]);
-    }
-
-    finally {
-      setLoadingPlaces(false);
-    }
-  };
-
-  // ----------------------------------
-  // Fetch Nearby Places after Location
-  // ----------------------------------
-
-  useEffect(() => {
-    if (!userLocation) {
-      return;
-    }
-
-    fetchNearbyPlaces(
-      userLocation[0],
-      userLocation[1]
-    );
+    fetchNearbyPlaces();
   }, [userLocation]);
-
-  // ----------------------------------
-  // Page
-  // ----------------------------------
 
   return (
     <div className="nearby-page">
 
-      {/* Header */}
-
       <div className="nearby-header">
-
-        <h1>
-          Nearby Locations
-        </h1>
+        <h1>Nearby Locations</h1>
 
         <p>
-          Find stays and useful places near your location.
+          Search any location and discover
+          nearby stays, restaurants and useful
+          places.
         </p>
-
       </div>
 
-      {/* Search */}
-
-      <div className="location-search-container">
-
-        <LocationSearch
-          setUserLocation={
-            setUserLocation
-          }
-          setSelectedLocationName={
-            setSelectedLocationName
-          }
-        />
-
-      </div>
-
-      {/* Selected Location Name */}
+      <LocationSearch
+        setUserLocation={setUserLocation}
+        setSelectedLocationName={
+          setSelectedLocationName
+        }
+      />
 
       {selectedLocationName && (
-        <p
-          style={{
-            textAlign: "center",
-            marginBottom: "15px",
-            fontWeight: "600"
-          }}
-        >
+        <div className="selected-location-name">
           📍 {selectedLocationName}
-        </p>
+        </div>
       )}
-
-      {/* Loading */}
 
       {loadingPlaces && (
-        <p
-          style={{
-            textAlign: "center",
-            marginBottom: "15px"
-          }}
-        >
-          🔎 Finding nearby places...
+        <p className="places-status">
+          Loading nearby places...
         </p>
       )}
 
-      {/* Error */}
-
       {placesError && (
-        <p
-          style={{
-            textAlign: "center",
-            color: "red",
-            marginBottom: "15px"
-          }}
-        >
+        <p className="places-error">
           {placesError}
         </p>
       )}
 
-      {/* Map */}
-
       <div className="map-box">
 
         <MapContainer
-          center={
-            userLocation ||
-            [20.5937, 78.9629]
-          }
+          center={[20.5937, 78.9629]}
           zoom={5}
           scrollWheelZoom={true}
-          style={{
-            width: "100%",
-            height: "100%"
-          }}
         >
 
-          {/* Use My Location */}
+          <TileLayer
+            attribution="&copy; OpenStreetMap contributors"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
           <LocationButton
             setUserLocation={
@@ -791,86 +567,68 @@ function NearbyLocations() {
             }
           />
 
-          {/* Move Map */}
-
           <MapLocationUpdater
-            userLocation={
-              userLocation
-            }
+            userLocation={userLocation}
           />
 
-          {/* OpenStreetMap */}
-
-          <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-
-          {/* Selected Location Marker */}
-
+          {/* Selected location */}
           {userLocation && (
             <Marker
-              position={
-                userLocation
-              }
+              position={userLocation}
+              icon={selectedLocationIcon}
             >
               <Popup>
-                📍{" "}
-                {selectedLocationName ||
-                  "Selected Location"}
+                <strong>
+                  {selectedLocationName ||
+                    "Selected Location"}
+                </strong>
               </Popup>
             </Marker>
           )}
 
-          {/* Real Nearby Places */}
+          {/* Nearby places */}
+          {places.map((place) => (
+            <Marker
+              key={`${place.id}-${place.lat}-${place.lon}`}
+              position={[
+                place.lat,
+                place.lon,
+              ]}
+              icon={place.icon}
+            >
+              <Popup>
 
-          {places.map(
-            (place) => (
-              <Marker
-                key={place.id}
-                position={
-                  place.location
-                }
-              >
+                <div className="place-popup">
 
-                <Popup>
-
-                  <strong>
-                    {place.icon}{" "}
+                  <h3>
                     {place.name}
-                  </strong>
+                  </h3>
 
-                  <br />
+                  <p>
+                    {place.type}
+                  </p>
 
-                  Category:{" "}
-                  {place.type}
+                  {place.type ===
+                    "Hotel / Stay" && (
+                    <button
+                      onClick={() => {
+                        window.location.href =
+                          "/hotel-details";
+                      }}
+                    >
+                      View Details
+                    </button>
+                  )}
 
-                  <br />
+                </div>
 
-                  Address:{" "}
-                  {place.address}
-
-                  <br />
-
-                  <button
-                    onClick={() => {
-                      window.location.href =
-                        "/hotel-details";
-                    }}
-                  >
-                    View Details
-                  </button>
-
-                </Popup>
-
-              </Marker>
-            )
-          )}
+              </Popup>
+            </Marker>
+          ))}
 
         </MapContainer>
 
       </div>
-
     </div>
   );
 }
